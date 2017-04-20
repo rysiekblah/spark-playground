@@ -25,7 +25,7 @@ object WikipediaRanking {
   val sc: SparkContext = new SparkContext(conf)
   // Hint: use a combination of `sc.textFile`, `WikipediaData.filePath` and `WikipediaData.parse`
 
-  val wikiRdd: RDD[WikipediaArticle] = sc.textFile(filePath).flatMap(s => List(parse(s))).persist(StorageLevel.MEMORY_AND_DISK)
+  val wikiRdd: RDD[WikipediaArticle] = sc.textFile(filePath).flatMap(s => List(parse(s))).persist(StorageLevel.MEMORY_ONLY_SER)
 
   /** Returns the number of articles on which the language `lang` occurs.
    *  Hint1: consider using method `aggregate` on RDD[T].
@@ -53,7 +53,10 @@ object WikipediaRanking {
    * to the Wikipedia pages in which it occurs.
    */
   def makeIndex(langs: List[String], rdd: RDD[WikipediaArticle]): RDD[(String, Iterable[WikipediaArticle])] =
-    sc.parallelize(langs.map(lang => (lang, rdd.filter(_.mentionsLanguage(lang)).collect().toIterable)))
+    rdd.flatMap(wa => for(l <- langs; if(wa.text.split("\\s+").contains(l))) yield (l,wa)).groupByKey()
+
+    //rdd.flatMap(wk => wk.text.split("\\s+").map((_,wk))).groupByKey().filter(wk => langs.contains(wk._1))
+    //sc.parallelize(langs.map(lang => (lang, rdd.filter(_.mentionsLanguage(lang)).collect().toIterable))).cache()
 
   /* (2) Compute the language ranking again, but now using the inverted index. Can you notice
    *     a performance improvement?
@@ -97,8 +100,8 @@ object WikipediaRanking {
 
     /* Languages ranked according to (3) */
     val langsRanked3: List[(String, Int)] = timed("Part 3: ranking using reduceByKey", rankLangsReduceByKey(langs, wikiRdd))
-//
-//    /* Output the speed of each ranking */
+
+    /* Output the speed of each ranking */
     println(timing)
     println("1 -> " + langsRanked)
     println("2 -> " + langsRanked2)

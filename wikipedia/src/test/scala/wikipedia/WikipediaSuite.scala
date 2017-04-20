@@ -6,6 +6,7 @@ import org.scalatest.junit.JUnitRunner
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
+import org.apache.spark.rdd.RDD
 
 @RunWith(classOf[JUnitRunner])
 class WikipediaSuite extends FunSuite with BeforeAndAfterAll {
@@ -106,6 +107,44 @@ class WikipediaSuite extends FunSuite with BeforeAndAfterAll {
     assert(res)
   }
 
+//    test("learn how aggregate works") {
+//
+//      assert(initializeWikipediaRanking(), " -- did you fill in all the values in WikipediaRanking (conf, sc, wikiRdd)?")
+//      import WikipediaRanking._
+//      val articles = List(
+//        WikipediaArticle("1","Groovy is pretty interesting, and so is Erlang"),
+//        WikipediaArticle("2","Scala and Java run on the JVM"),
+//        WikipediaArticle("3","Scala is not purely functional"),
+//        WikipediaArticle("4","The cool kids like Haskell more than Java"),
+//        WikipediaArticle("5","Java is for enterprise developers")
+//      )
+//      val rdd = sc.parallelize(articles)
+//      val langs = List("Java", "Groovy", "Scala")
+
+//      val res: RDD[(String, Iterable[WikipediaArticle])] = rdd.map(wk => check(wk, langs))
+//      def check(wiki: WikipediaArticle, langs: List[String]): (String, Iterable[WikipediaArticle]) = ???
+//      println(res)
+
+//      val res2 = wikiRdd.flatMap(wk => wk.text.split("\\s+").map((_,wk))).filter(wk => langs.contains(wk._1)).groupByKey(10) //.filter(wk => langs.contains(wk._1))
+//      res2.foreach(println)
+//
+//      def containsLanguage(wa: String, lang: String) = wa.split(" ").contains(lang)
+//      val res4 = wikiRdd.flatMap(wa => for(l <- langs; if (containsLanguage(wa.text, l))) yield (l,wa)).groupByKey()
+//      res4.foreach(println)
+//
+//      val res3 = rdd.flatMap(wk => if(!langs.forall(!wk.text.contains(_))) wk.text.split("\\s+").map((_,wk)) else None).groupByKey()
+//      res3.foreach(println)
+
+//      println(check(WikipediaArticle("1","Groovy is pretty interesting, and so is Erlang")))
+//      println(check(WikipediaArticle("1"," is pretty interesting, and so is Erlang")))
+//
+//      def check(wk:WikipediaArticle):Boolean = {
+//        !langs.forall(!wk.text.contains(_))
+//      }
+//    }
+
+
+
 //  test("learn how aggregate works") {
 //
 //    assert(initializeWikipediaRanking(), " -- did you fill in all the values in WikipediaRanking (conf, sc, wikiRdd)?")
@@ -115,13 +154,13 @@ class WikipediaSuite extends FunSuite with BeforeAndAfterAll {
 //    val res = rdd.aggregate(0)((acc, wiki) => (wiki.mentionsLanguage(lang)), )
 //  }
 
-  test("learn") {
-    assert(initializeWikipediaRanking(), " -- did you fill in all the values in WikipediaRanking (conf, sc, wikiRdd)?")
-    import WikipediaRanking._
-    val rdd = sc.parallelize(List(("tomasz", 21),("richi", 22),("johny", 23)))
-    val rdd2 = sc.parallelize(List(("tomasz", "tool for all"), ("richi", "great things"), ("johny", "is great tool")))
-    val res2 = rdd2.aggregate(0)( (acc, text) => if (text._2.contains("great")) acc + 1 else acc, (a1, a2) => a1+a2 )
-    println("RES: " + res2)
+//  test("learn") {
+//    assert(initializeWikipediaRanking(), " -- did you fill in all the values in WikipediaRanking (conf, sc, wikiRdd)?")
+//    import WikipediaRanking._
+//    val rdd = sc.parallelize(List(("tomasz", 21),("richi", 22),("johny", 23)))
+//    val rdd2 = sc.parallelize(List(("tomasz", "tool for all"), ("richi", "great things"), ("johny", "is great tool")))
+//    val res2 = rdd2.aggregate(0)( (acc, text) => if (text._2.contains("great")) acc + 1 else acc, (a1, a2) => a1+a2 )
+//    println("RES: " + res2)
     //val res = rdd.aggregate(0)( ((acc, sal) => acc + sal._2), (a, b) => (a + b) )
 //    val ph: String = "great"
 //    val res = rdd2.aggregate(0)( ( acc, text ) => {
@@ -137,16 +176,16 @@ class WikipediaSuite extends FunSuite with BeforeAndAfterAll {
 //      println("a1, a2 => " + a1 + ", " + a2)
 //      a1 + a2
 //    } )
-  }
+//  }
 
-  test("learn - mapWith") {
-    assert(initializeWikipediaRanking(), " -- did you fill in all the values in WikipediaRanking (conf, sc, wikiRdd)?")
-    import WikipediaRanking._
-    val rdd = sc.parallelize(List(1,2,3,4,5,6,7,8,9,10), 3)
-    rdd.reduce((a, b) => {
-      println("a: " + a + ", b: " + b)
-      a+b
-    })
-  }
+//  test("learn - mapWith") {
+//    assert(initializeWikipediaRanking(), " -- did you fill in all the values in WikipediaRanking (conf, sc, wikiRdd)?")
+//    import WikipediaRanking._
+//    val rdd = sc.parallelize(List(1,2,3,4,5,6,7,8,9,10), 3)
+//    rdd.reduce((a, b) => {
+//      println("a: " + a + ", b: " + b)
+//      a+b
+//    })
+//  }
 
 }
